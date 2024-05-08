@@ -39,21 +39,29 @@ class SigninFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.botonConfirmar.setOnClickListener {
-            if (binding.contraUsuSignIn.text.toString() == binding.contra2UsuSignIn.text.toString()){
-                auth.createUserWithEmailAndPassword(binding.correoUsuSignIn.text.toString(),
-                    binding.contraUsuSignIn.text.toString())
-                    .addOnCompleteListener {
-                        if (it.isSuccessful){
-                            findNavController().navigate(R.id.action_signinFragment_to_loginFragment)
-                        }else{
-                            Snackbar.make(binding.root,"Datos inválidos",Snackbar.LENGTH_SHORT).show()
+            if(isEmailValid(binding.correoUsuSignIn.text.toString())){
+                if (binding.contraUsuSignIn.text.toString() == binding.contra2UsuSignIn.text.toString()){
+                    auth.createUserWithEmailAndPassword(binding.correoUsuSignIn.text.toString(),
+                        binding.contraUsuSignIn.text.toString())
+                        .addOnCompleteListener {
+                            if (it.isSuccessful){
+                                findNavController().navigate(R.id.action_signinFragment_to_loginFragment)
+                            }else{
+                                 Snackbar.make(binding.root,"Datos inválidos",Snackbar.LENGTH_SHORT).show()
+                            }
                         }
-                    }
+                }else{
+                    Snackbar.make(binding.root,"La contraseña no coincide con la otra contraseña",Snackbar.LENGTH_SHORT).show()
+                }
             }else{
-                Snackbar.make(binding.root,"La contraseña no coincide con la otra contraseña",Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root,"El correo electrónico no es válido",Snackbar.LENGTH_SHORT).show()
             }
-
         }
+    }
+
+    private fun isEmailValid(email: String): Boolean {
+        val emailRegex = Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
+        return emailRegex.matches(email)
     }
 
     override fun onDestroyView() {
